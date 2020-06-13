@@ -1,0 +1,10 @@
+.board {
+  background-color: #7d5a2b;
+  box-shadow: 0 0 0 2px black;
+  width: 500px;
+  height: 500px;
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: repeat(10, minmax(50px, 1fr));
+  grid-template-rows: repeat(10, minmax(50px, 1fr));
+}
