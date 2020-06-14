@@ -9,12 +9,15 @@ import {IPlayer} from '../../interfaces/player';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
+  sizeX = 15;
+  sizeY = 10;
 
   constructor(public cellsService: CellsService,
               public playerService: PlayerService) { }
 
   ngOnInit(): void {
     this.playerService.initPlayers();
+    this.cellsService.initBoardSize(this.sizeX, this.sizeY);
   }
 
 

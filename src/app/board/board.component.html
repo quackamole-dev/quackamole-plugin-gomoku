@@ -1,4 +1,8 @@
-<span class="board">
+<span
+  class="board"
+  [ngStyle]="{'grid-template-columns': 'repeat(' + sizeX + ', minmax(50px, 1fr))',
+              'grid-template-rows': 'repeat(' + sizeY + ', minmax(50px, 1fr))'}"
+>
   <span *ngFor="let cell of cellsService.cells; index as i">
       <app-cell [cellIndex]="i" [cellState]="cell" (placeStone)="handlePlaceStone($event)"></app-cell>
   </span>

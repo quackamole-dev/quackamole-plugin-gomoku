@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {IPlayer} from '../interfaces/player';
 import {STONE_TYPE} from '../constants';
 
@@ -21,6 +21,14 @@ export class CellsService {
   ];
 
   constructor() { }
+
+  initBoardSize(x: number, y: number): void {
+    // TODO css grid styling should adjust dynamically according to board size. Now it is hardcoded to 10x10
+    this.cells = [];
+    this.cells.length = x * y;
+    this.cells.fill(STONE_TYPE.NONE);
+    console.log('cells', this.cells);
+  }
 
 
   cellEmpty(cellIndex: number): boolean {
