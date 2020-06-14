@@ -1,5 +1,5 @@
 <div class="cell" (click)="handlePlaceStone($event)">
   <div class="cell-content">
-    <div class="cell-stone dark preview"></div>
+    <div [ngClass]="{'cell-stone': true, 'light': isLightStone(), 'dark': isDarkStone()}"></div>
   </div>
 </div>

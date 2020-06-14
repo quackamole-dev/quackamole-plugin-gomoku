@@ -1,5 +1,5 @@
 <span class="board">
-  <span *ngFor="let cell of cells">
-      <app-cell></app-cell>
+  <span *ngFor="let cell of cellsService.cells; index as i">
+      <app-cell [cellIndex]="i" [cellState]="cell" (placeStone)="handlePlaceStone($event)"></app-cell>
   </span>
 </span>

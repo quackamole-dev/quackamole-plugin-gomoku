@@ -10,12 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0;
     transition: 0.1s;
-
-    &:hover {
-      opacity: 1;
-    }
   }
 
   &-stone {
@@ -23,27 +18,15 @@
     width: 85%;
     height: 85%;
     border-radius: 50%;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.35);
-
-    hover {
-      box-shadow: 1.5px 1.5px 1px 1px rgba(0, 0, 0, 0.35);
-      transform: scale(1.05);
-      opacity: 1;
-    }
 
     &.dark {
+      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.35);
       background: radial-gradient(50% 55% at 50% 49%, #4c4c4c 7%, #000000 93%) no-repeat 50% 50% / 100% 100%;
-
     }
 
     &.light {
+      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.35);
       background: radial-gradient(50% 55% at 50% 49%, #ffffff 7%, #a1a1a1 93%) no-repeat 50% 50% / 100% 100%;
-
-      &-preview {
-        opacity: 0.7;
-      }
     }
   }
-
-
 }
