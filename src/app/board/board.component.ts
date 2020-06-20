@@ -10,7 +10,7 @@ import {IPlayer} from '../../interfaces/player';
 })
 export class BoardComponent implements OnInit {
   sizeX = 15;
-  sizeY = 10;
+  sizeY = 6;
 
   constructor(public cellsService: CellsService,
               public playerService: PlayerService) { }
@@ -20,12 +20,16 @@ export class BoardComponent implements OnInit {
     this.cellsService.initBoardSize(this.sizeX, this.sizeY);
   }
 
-
   handlePlaceStone(cellIndex: number) {
     if (this.cellsService.cellEmpty(cellIndex)) {
       const player: IPlayer = this.playerService.getActivePlayer();
       this.cellsService.placeStone(player, cellIndex);
-      this.playerService.toggleActivePlayer();
+
+      if (this.cellsService.checkWinningCondition(player, cellIndex)) {
+        console.log('player', player, 'won the game!');
+      } else {
+        this.playerService.toggleActivePlayer();
+      }
     }
   }
 }
