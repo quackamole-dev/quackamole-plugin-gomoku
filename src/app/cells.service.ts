@@ -8,7 +8,6 @@ import {STONE_TYPE} from '../constants';
 export class CellsService {
   sizeX = 10;
   sizeY = 10;
-  // 0 = no stone, 1 = light, 2 = dark
   cells: STONE_TYPE[] = [
     1, 2, 1, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -49,7 +48,11 @@ export class CellsService {
   private checkHorizontal(player: IPlayer, index) {
     const indicesLeft = [index - 4, index - 3, index - 2, index - 1, index];
     const indicesRight = [index, index + 1, index + 2, index + 3, index + 4];
-    return this.checkSequence(indicesLeft, player.stoneType) || this.checkSequence(indicesRight, player.stoneType);
+
+    const isWonLeft = this.checkSequence(indicesLeft, player.stoneType) && this.noOverflow(indicesLeft);
+    const isWonRight = this.checkSequence(indicesRight, player.stoneType) && this.noOverflow(indicesRight);
+
+    return isWonLeft || isWonRight;
   }
 
   private checkVertical(player: IPlayer, index) {
@@ -61,20 +64,33 @@ export class CellsService {
 
   private checkDiagonal(player: IPlayer, index) {
     let offset = this.sizeX + 1;
-    const indicesTopLeft = [index - (offset * 4), index - (offset * 3), index - (offset * 2), index - offset, index];
-    const indicesBottomRight = [index + (offset * 4), index + (offset * 3), index + (offset * 2), index + offset, index];
-    const isWonTopLeftToBottomRight: boolean = this.checkSequence(indicesTopLeft, player.stoneType) || this.checkSequence(indicesBottomRight, player.stoneType);
+    const indicesTL = [index - (offset * 4), index - (offset * 3), index - (offset * 2), index - offset, index];
+    const indicesBR = [index, index + offset, index + offset * 2, index + offset * 3, index + offset * 4];
 
     offset = this.sizeX - 1;
-    const indicesTopRight = [index - (offset * 4), index - (offset * 3), index - (offset * 2), index - offset, index];
-    const indicesBottomLeft = [index + (offset * 4), index + (offset * 3), index + (offset * 2), index + offset, index];
-    const isWonTopRightToBottomLeft: boolean = this.checkSequence(indicesTopRight, player.stoneType) || this.checkSequence(indicesBottomLeft, player.stoneType);
+    const indicesTR = [index, index - offset, index - offset * 2, index - offset * 3, index - offset * 4];
+    const indicesBL = [index + (offset * 4), index + (offset * 3), index + (offset * 2), index + offset, index];
 
-    return isWonTopLeftToBottomRight || isWonTopRightToBottomLeft;
+    const isWonTL = this.checkSequence(indicesTL, player.stoneType) && this.noOverflow(indicesTL);
+    const isWonBR = this.checkSequence(indicesBR, player.stoneType) && this.noOverflow(indicesBR);
+    const isWonTR = this.checkSequence(indicesTR, player.stoneType) && this.noOverflow(indicesTR);
+    const isWonBL = this.checkSequence(indicesBL, player.stoneType) && this.noOverflow(indicesBL);
+
+    return isWonTL || isWonBR || isWonTR || isWonBL;
   }
 
   private checkSequence(indices: Array<number>, stoneType: STONE_TYPE): boolean {
     const cellSequence = indices.map((index: number) => this.cells[index]);
     return cellSequence.every((_stoneType: STONE_TYPE) => _stoneType === stoneType);
+  }
+
+  /**
+   * verify that the sequence is not wrapping around the horizontal border
+   */
+  private noOverflow(indices: number[]): boolean {
+    const numbers = indices.map((_index: number) => _index % this.sizeX);
+    return numbers.every((num: number, i: number, arr: number[]) => {
+      return i === 0 || num > arr[i - 1];
+    });
   }
 }

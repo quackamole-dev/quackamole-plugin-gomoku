@@ -10,7 +10,7 @@ import {IPlayer} from '../../interfaces/player';
 })
 export class BoardComponent implements OnInit {
   sizeX = 15;
-  sizeY = 6;
+  sizeY = 15;
 
   constructor(public cellsService: CellsService,
               public playerService: PlayerService) { }
