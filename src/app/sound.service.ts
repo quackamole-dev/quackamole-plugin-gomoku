@@ -9,12 +9,14 @@ export class SoundService {
   constructor() { }
 
   init() {
-    this.sounds.set('place stone', new Audio('/assets/bounce.wav'));
+    this.sounds.set('place stone', new Audio('../assets/bounce.wav'));
   }
 
   play(soundKey: string) {
     if (this.sounds.has(soundKey)) {
-      this.sounds.get(soundKey).play();
+      const sound = this.sounds.get(soundKey);
+      sound.load();
+      sound.addEventListener('canplay', () => sound.play());
     }
   }
 }
