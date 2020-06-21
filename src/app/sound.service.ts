@@ -1,4 +1,5 @@
 import {Injectable, OnInit} from '@angular/core';
+import {Howl} from 'howler'
 
 @Injectable({
   providedIn: 'root'
@@ -9,14 +10,15 @@ export class SoundService {
   constructor() { }
 
   init() {
-    this.sounds.set('place stone', new Audio('../assets/bounce.wav'));
+
+    this.sounds.set('place stone', new Howl({ src: ['./assets/bounce.wav']}));
   }
 
   play(soundKey: string) {
     if (this.sounds.has(soundKey)) {
       const sound = this.sounds.get(soundKey);
       sound.load();
-      sound.addEventListener('canplay', () => sound.play());
+      sound.play();
     }
   }
 }
