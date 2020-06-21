@@ -1,41 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CellsService} from '../cells.service';
 import {PlayerService} from '../player.service';
 import {IPlayer} from '../../interfaces/player';
+import {QuackamoleService} from '../quackamole.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {IAction} from '../../interfaces/action';
+import {STONE_TYPE} from '../../constants';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit, OnDestroy {
+  private ngUnsubscribe$ = new Subject();  // https://stackoverflow.com/a/41177163
   sizeX = 12;
   sizeY = 8;
-  winningPlayer: IPlayer;
 
   constructor(public cellsService: CellsService,
-              public playerService: PlayerService) { }
+              public playerService: PlayerService,
+              public quackamoleService: QuackamoleService) { }
 
   ngOnInit(): void {
     this.initGame();
+    this.initSubscriptions();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
   }
 
   initGame() {
     this.playerService.initPlayers();
     this.cellsService.initBoardSize(this.sizeX, this.sizeY);
-    this.winningPlayer = null;
+    this.quackamoleService.init();
+  }
+
+  resetGame() {
+    this.quackamoleService.sendResetGame();
   }
 
   handlePlaceStone(cellIndex: number) {
     if (this.cellsService.cellEmpty(cellIndex)) {
       const player: IPlayer = this.playerService.getActivePlayer();
-      this.cellsService.placeStone(player, cellIndex);
 
-      if (this.cellsService.checkWinningCondition(player, cellIndex)) {
-        this.winningPlayer = player;
-      } else {
-        this.playerService.toggleActivePlayer();
+      // the first player placing a stone on an empty board is automatically the starting player
+      if (this.cellsService.boardEmpty()) {
+        this.playerService.localPeerStarted = true;
+      }
+
+      // place stone only when own turn
+      if (player.stoneType === this.playerService.getMyPlayer().stoneType) {
+        this.quackamoleService.sendPlaceStone({player, cellIndex});
       }
     }
+  }
+
+  getEndGameMessage(): string {
+    const activePlayer = this.playerService.getActivePlayer();
+    const myPlayer = this.playerService.getMyPlayer();
+    const didIWin = activePlayer.stoneType === myPlayer.stoneType;
+    return didIWin ? 'Congratulations, you won the game!' : 'Sorry, you lost the game!';
+  }
+
+  initSubscriptions() {
+    this.quackamoleService.peerAction$.pipe(takeUntil(this.ngUnsubscribe$)).subscribe((action: IAction) => {
+        this.cellsService.placeStone(action);
+
+        if (this.cellsService.checkWinningCondition(action)) {
+          this.playerService.winningPlayer = action.player;
+        } else {
+          this.playerService.toggleActivePlayer();
+        }
+      });
+
+    this.quackamoleService.resetGame$.pipe(takeUntil(this.ngUnsubscribe$)).subscribe(() => {
+        this.initGame();
+      });
   }
 }

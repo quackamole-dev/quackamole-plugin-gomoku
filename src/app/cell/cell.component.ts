@@ -13,7 +13,6 @@ export class CellComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    // console.log('cell index', this.cellIndex, 'cell state', this.cellState);
   }
 
   handlePlaceStone($event: MouseEvent) {

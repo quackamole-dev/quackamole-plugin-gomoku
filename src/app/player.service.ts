@@ -1,6 +1,6 @@
-import {Injectable, OnInit} from '@angular/core';
-import { IPlayer } from '../interfaces/player';
-import { STONE_TYPE } from '../constants';
+import {Injectable} from '@angular/core';
+import {IPlayer} from '../interfaces/player';
+import {STONE_TYPE} from '../constants';
 
 
 @Injectable({
@@ -10,11 +10,17 @@ export class PlayerService {
   private playerLight: IPlayer;
   private playerDark: IPlayer;
   private activePlayer: IPlayer;
+  localPeerStarted = false;
+  winningPlayer: IPlayer;
 
   constructor() { }
 
   getActivePlayer(): IPlayer {
-    return {...this.activePlayer};
+    return this.activePlayer;
+  }
+
+  getMyPlayer(): IPlayer {
+    return this.localPeerStarted ? this.playerLight : this.playerDark;
   }
 
   toggleActivePlayer(): void {
@@ -36,5 +42,7 @@ export class PlayerService {
     };
 
     this.activePlayer = {...this.playerLight};
+    this.winningPlayer = null;
+    this.localPeerStarted = false;
   }
 }

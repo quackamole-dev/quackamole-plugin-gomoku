@@ -8,10 +8,10 @@
   </span>
 </span>
 
-<div *ngIf="winningPlayer" class="overlay">
+<div *ngIf="playerService.winningPlayer" class="overlay">
   <div class="overlay-backdrop"> </div>
   <div class="overlay-content">
-    <h2>{{winningPlayer.peerId}} won the game!</h2>
-    <button (click)="initGame()">Play again</button>
+    <h2>{{getEndGameMessage()}}</h2>
+    <button (click)="resetGame()">Play again</button>
   </div>
 </div>

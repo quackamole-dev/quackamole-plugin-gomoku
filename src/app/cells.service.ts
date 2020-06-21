@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {IPlayer} from '../interfaces/player';
 import {STONE_TYPE} from '../constants';
+import {IAction} from '../interfaces/action';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,6 @@ export class CellsService {
     this.cells = [];
     this.cells.length = x * y;
     this.cells.fill(STONE_TYPE.NONE);
-    console.log('cells', this.cells);
   }
 
 
@@ -37,17 +36,21 @@ export class CellsService {
     return !this.cells[index];
   }
 
-  placeStone(player: IPlayer, index: number): void {
-    this.cells[index] = player.stoneType;
+  boardEmpty(): boolean {
+    return this.cells.every((stoneType: STONE_TYPE) => stoneType === STONE_TYPE.NONE);
   }
 
-  checkWinningCondition(player: IPlayer, index: number): boolean {
-    return this.checkHorizontal(player, index) || this.checkVertical(player, index) || this.checkDiagonal(player, index);
+  placeStone(action: IAction): void {
+    this.cells[action.cellIndex] = action.player.stoneType;
   }
 
-  private checkHorizontal(player: IPlayer, index) {
-    const indicesLeft = [index, index - 1, index - 2, index - 3, index - 4];
-    const indicesRight = [index, index + 1, index + 2, index + 3, index + 4];
+  checkWinningCondition(action: IAction): boolean {
+    return this.checkHorizontal(action) || this.checkVertical(action) || this.checkDiagonal(action);
+  }
+
+  private checkHorizontal({player, cellIndex}: IAction) {
+    const indicesLeft = [cellIndex, cellIndex - 1, cellIndex - 2, cellIndex - 3, cellIndex - 4];
+    const indicesRight = [cellIndex, cellIndex + 1, cellIndex + 2, cellIndex + 3, cellIndex + 4];
 
     let lengthLeft = this.getSequenceLength(indicesLeft, player.stoneType);
     let lengthRight = this.getSequenceLength(indicesRight, player.stoneType);
@@ -61,10 +64,10 @@ export class CellsService {
     return lengthLeft + lengthRight - 1 >= 5;
   }
 
-  private checkVertical(player: IPlayer, index) {
+  private checkVertical({player, cellIndex}: IAction) {
     const offset = this.sizeX;
-    const indicesTop = [index, index - offset, index - (offset * 2), index - (offset * 3), index - (offset * 4)];
-    const indicesBottom = [index, index + offset, index + (offset * 2), index + (offset * 3), index + (offset * 4)];
+    const indicesTop = [cellIndex, cellIndex - offset, cellIndex - (offset * 2), cellIndex - (offset * 3), cellIndex - (offset * 4)];
+    const indicesBottom = [cellIndex, cellIndex + offset, cellIndex + (offset * 2), cellIndex + (offset * 3), cellIndex + (offset * 4)];
 
     const lengthTop = this.getSequenceLength(indicesTop, player.stoneType);
     const lengthBottom = this.getSequenceLength(indicesBottom, player.stoneType);
@@ -72,14 +75,14 @@ export class CellsService {
     return lengthTop + lengthBottom - 1 >= 5;
   }
 
-  private checkDiagonal(player: IPlayer, index) {
+  private checkDiagonal({player, cellIndex}: IAction) {
     let offset = this.sizeX + 1;
-    const indicesTL = [index, index - offset, index - offset * 2, index - offset * 3, index - offset * 4];
-    const indicesBR = [index, index + offset, index + offset * 2, index + offset * 3, index + offset * 4];
+    const indicesTL = [cellIndex, cellIndex - offset, cellIndex - offset * 2, cellIndex - offset * 3, cellIndex - offset * 4];
+    const indicesBR = [cellIndex, cellIndex + offset, cellIndex + offset * 2, cellIndex + offset * 3, cellIndex + offset * 4];
 
     offset = this.sizeX - 1;
-    const indicesTR = [index, index - offset, index - offset * 2, index - offset * 3, index - offset * 4];
-    const indicesBL = [index, index + offset, index + offset * 2, index + offset * 3, index + offset * 4];
+    const indicesTR = [cellIndex, cellIndex - offset, cellIndex - offset * 2, cellIndex - offset * 3, cellIndex - offset * 4];
+    const indicesBL = [cellIndex, cellIndex + offset, cellIndex + offset * 2, cellIndex + offset * 3, cellIndex + offset * 4];
 
     let lengthTL = this.getSequenceLength(indicesTL, player.stoneType);
     let lengthBR = this.getSequenceLength(indicesBR, player.stoneType);
