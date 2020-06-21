@@ -6,6 +6,7 @@ import {QuackamoleService} from '../quackamole.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {IAction} from '../../interfaces/action';
+import {SoundService} from '../sound.service';
 
 @Component({
   selector: 'app-board',
@@ -19,11 +20,13 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   constructor(public cellsService: CellsService,
               public playerService: PlayerService,
-              public quackamoleService: QuackamoleService) { }
+              public quackamoleService: QuackamoleService,
+              public soundService: SoundService) { }
 
   ngOnInit(): void {
     this.initGame();
     this.initSubscriptions();
+    this.soundService.init();
   }
 
   ngOnDestroy() {
@@ -67,6 +70,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   initSubscriptions() {
     this.quackamoleService.peerAction$.pipe(takeUntil(this.ngUnsubscribe$)).subscribe((action: IAction) => {
         this.cellsService.placeStone(action);
+        this.soundService.play('place stone'); // TODO use constants to identify sound effects
 
         if (this.cellsService.checkWinningCondition(action)) {
           this.playerService.winningPlayer = action.player;
