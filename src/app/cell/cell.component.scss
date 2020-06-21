@@ -15,17 +15,17 @@
 
   &-stone {
     display: inline-block;
-    width: 85%;
-    height: 85%;
+    width: 80%;
+    height: 80%;
     border-radius: 50%;
 
     &.dark {
-      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.35);
+      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.3);
       background: radial-gradient(50% 55% at 50% 49%, #4c4c4c 7%, #000000 93%) no-repeat 50% 50% / 100% 100%;
     }
 
     &.light {
-      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.35);
+      box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.3);
       background: radial-gradient(50% 55% at 50% 49%, #ffffff 7%, #a1a1a1 93%) no-repeat 50% 50% / 100% 100%;
     }
   }

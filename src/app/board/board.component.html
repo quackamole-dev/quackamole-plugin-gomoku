@@ -7,3 +7,11 @@
       <app-cell [cellIndex]="i" [cellState]="cell" (placeStone)="handlePlaceStone($event)"></app-cell>
   </span>
 </span>
+
+<div *ngIf="winningPlayer" class="overlay">
+  <div class="overlay-backdrop"> </div>
+  <div class="overlay-content">
+    <h2>{{winningPlayer.peerId}} won the game!</h2>
+    <button (click)="initGame()">Play again</button>
+  </div>
+</div>

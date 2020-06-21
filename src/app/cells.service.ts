@@ -46,51 +46,78 @@ export class CellsService {
   }
 
   private checkHorizontal(player: IPlayer, index) {
-    const indicesLeft = [index - 4, index - 3, index - 2, index - 1, index];
+    const indicesLeft = [index, index - 1, index - 2, index - 3, index - 4];
     const indicesRight = [index, index + 1, index + 2, index + 3, index + 4];
 
-    const isWonLeft = this.checkSequence(indicesLeft, player.stoneType) && this.noOverflow(indicesLeft);
-    const isWonRight = this.checkSequence(indicesRight, player.stoneType) && this.noOverflow(indicesRight);
+    let lengthLeft = this.getSequenceLength(indicesLeft, player.stoneType);
+    let lengthRight = this.getSequenceLength(indicesRight, player.stoneType);
 
-    return isWonLeft || isWonRight;
+    const maxLengthLeft = this.getMaxLength(indicesLeft);
+    const maxLengthRight = this.getMaxLength(indicesRight);
+
+    lengthLeft = Math.min(lengthLeft, maxLengthLeft);
+    lengthRight = Math.min(lengthRight, maxLengthRight);
+
+    return lengthLeft + lengthRight - 1 >= 5;
   }
 
   private checkVertical(player: IPlayer, index) {
     const offset = this.sizeX;
-    const indicesTop = [index - (offset * 4), index - (offset * 3), index - (offset * 2), index - offset, index];
+    const indicesTop = [index, index - offset, index - (offset * 2), index - (offset * 3), index - (offset * 4)];
     const indicesBottom = [index, index + offset, index + (offset * 2), index + (offset * 3), index + (offset * 4)];
-    return this.checkSequence(indicesTop, player.stoneType) || this.checkSequence(indicesBottom, player.stoneType);
+
+    const lengthTop = this.getSequenceLength(indicesTop, player.stoneType);
+    const lengthBottom = this.getSequenceLength(indicesBottom, player.stoneType);
+
+    return lengthTop + lengthBottom - 1 >= 5;
   }
 
   private checkDiagonal(player: IPlayer, index) {
     let offset = this.sizeX + 1;
-    const indicesTL = [index - (offset * 4), index - (offset * 3), index - (offset * 2), index - offset, index];
+    const indicesTL = [index, index - offset, index - offset * 2, index - offset * 3, index - offset * 4];
     const indicesBR = [index, index + offset, index + offset * 2, index + offset * 3, index + offset * 4];
 
     offset = this.sizeX - 1;
     const indicesTR = [index, index - offset, index - offset * 2, index - offset * 3, index - offset * 4];
-    const indicesBL = [index + (offset * 4), index + (offset * 3), index + (offset * 2), index + offset, index];
+    const indicesBL = [index, index + offset, index + offset * 2, index + offset * 3, index + offset * 4];
 
-    const isWonTL = this.checkSequence(indicesTL, player.stoneType) && this.noOverflow(indicesTL);
-    const isWonBR = this.checkSequence(indicesBR, player.stoneType) && this.noOverflow(indicesBR);
-    const isWonTR = this.checkSequence(indicesTR, player.stoneType) && this.noOverflow(indicesTR);
-    const isWonBL = this.checkSequence(indicesBL, player.stoneType) && this.noOverflow(indicesBL);
+    let lengthTL = this.getSequenceLength(indicesTL, player.stoneType);
+    let lengthBR = this.getSequenceLength(indicesBR, player.stoneType);
+    let lengthTR = this.getSequenceLength(indicesTR, player.stoneType);
+    let lengthBL = this.getSequenceLength(indicesBL, player.stoneType);
 
-    return isWonTL || isWonBR || isWonTR || isWonBL;
-  }
+    const maxLengthTL = this.getMaxLength(indicesTL);
+    const maxLengthBR = this.getMaxLength(indicesBR);
+    const maxLengthTR = this.getMaxLength(indicesTR);
+    const maxLengthBL = this.getMaxLength(indicesBL);
 
-  private checkSequence(indices: Array<number>, stoneType: STONE_TYPE): boolean {
-    const cellSequence = indices.map((index: number) => this.cells[index]);
-    return cellSequence.every((_stoneType: STONE_TYPE) => _stoneType === stoneType);
+    lengthTL = Math.min(lengthTL, maxLengthTL);
+    lengthBR = Math.min(lengthBR, maxLengthBR);
+    lengthTR = Math.min(lengthTR, maxLengthTR);
+    lengthBL = Math.min(lengthBL, maxLengthBL);
+
+    return lengthTL + lengthBR - 1 >= 5 || lengthTR + lengthBL - 1 >= 5;
   }
 
   /**
-   * verify that the sequence is not wrapping around the horizontal border
+   * Compare a sequence of indices to get the number of stoneTypes in a row
+   * @param indices The cell indices you want to compare
+   * @param stoneType The STONE_TYPE you want to check against
    */
-  private noOverflow(indices: number[]): boolean {
+  private getSequenceLength(indices: number[], stoneType: STONE_TYPE): number {
+    const cellSequence = indices.map((index: number) => this.cells[index]);
+    const firstWrongStoneIndex = cellSequence.findIndex((type: STONE_TYPE) => type !== stoneType);
+    return firstWrongStoneIndex === -1 ? 5 : firstWrongStoneIndex;
+  }
+
+  /**
+   * Returns the max chain length possible without wrapping around the left or right edge
+   */
+  private getMaxLength(indices: number[]): number {
     const numbers = indices.map((_index: number) => _index % this.sizeX);
-    return numbers.every((num: number, i: number, arr: number[]) => {
-      return i === 0 || num > arr[i - 1];
-    });
+    for (let i = 1; i < numbers.length; i++) {
+      if (Math.abs(numbers[i] - numbers[i - 1]) !== 1) { return i; }
+    }
+    return 5;
   }
 }

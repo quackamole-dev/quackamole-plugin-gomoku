@@ -9,15 +9,21 @@ import {IPlayer} from '../../interfaces/player';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
-  sizeX = 15;
-  sizeY = 15;
+  sizeX = 12;
+  sizeY = 8;
+  winningPlayer: IPlayer;
 
   constructor(public cellsService: CellsService,
               public playerService: PlayerService) { }
 
   ngOnInit(): void {
+    this.initGame();
+  }
+
+  initGame() {
     this.playerService.initPlayers();
     this.cellsService.initBoardSize(this.sizeX, this.sizeY);
+    this.winningPlayer = null;
   }
 
   handlePlaceStone(cellIndex: number) {
@@ -26,7 +32,7 @@ export class BoardComponent implements OnInit {
       this.cellsService.placeStone(player, cellIndex);
 
       if (this.cellsService.checkWinningCondition(player, cellIndex)) {
-        console.log('player', player, 'won the game!');
+        this.winningPlayer = player;
       } else {
         this.playerService.toggleActivePlayer();
       }

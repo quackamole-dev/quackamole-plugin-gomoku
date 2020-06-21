@@ -10,7 +10,6 @@ export class CellComponent implements OnInit {
   @Input() cellState: number;
   @Output() placeStone: EventEmitter<number> = new EventEmitter();
 
-
   constructor() { }
 
   ngOnInit(): void {
@@ -18,7 +17,6 @@ export class CellComponent implements OnInit {
   }
 
   handlePlaceStone($event: MouseEvent) {
-    // console.log('place stone');
     this.placeStone.emit(this.cellIndex);
   }
 

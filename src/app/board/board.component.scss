@@ -4,3 +4,51 @@
   display: grid;
   grid-gap: 0;
 }
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.5;
+  }
+
+  &-content {
+    border-radius: 3px;
+    padding: 1.5rem;
+    z-index: 2;
+    width: 400px;
+    max-width: 95vw;
+    background-color: white;
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.20);
+    text-align: center;
+
+    h2 {
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: 1px solid black;
+      border-radius: 3px;
+      background-color: #efefee;
+      opacity: 0.6;
+      cursor: pointer;
+      transition: opacity 0.15s;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
