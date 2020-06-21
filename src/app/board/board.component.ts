@@ -6,7 +6,6 @@ import {QuackamoleService} from '../quackamole.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {IAction} from '../../interfaces/action';
-import {STONE_TYPE} from '../../constants';
 
 @Component({
   selector: 'app-board',
@@ -15,8 +14,8 @@ import {STONE_TYPE} from '../../constants';
 })
 export class BoardComponent implements OnInit, OnDestroy {
   private ngUnsubscribe$ = new Subject();  // https://stackoverflow.com/a/41177163
-  sizeX = 12;
-  sizeY = 8;
+  sizeX = 15;
+  sizeY = 10;
 
   constructor(public cellsService: CellsService,
               public playerService: PlayerService,
@@ -81,3 +80,5 @@ export class BoardComponent implements OnInit, OnDestroy {
       });
   }
 }
+
+// TODO make a 3D box out of the board https://3dtransforms.desandro.com/cube that can be moved around by dragging the mouse
